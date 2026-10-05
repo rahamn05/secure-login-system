@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Secure Login System</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    #243b55,
+                    transparent 40%
+                ),
+                radial-gradient(
+                    circle at bottom right,
+                    #141e30,
+                    transparent 45%
+                ),
+                #0b1120;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 25px;
+
+            color: #ffffff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 650px;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            background: rgba(255, 255, 255, 0.08);
+
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            border-radius: 28px;
+
+            overflow: hidden;
+
+            backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 30px 80px
+                rgba(0, 0, 0, 0.45);
+        }
+
+        /* =========================
+           LEFT SIDE
+        ========================= */
+
+        .left {
+            padding: 60px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(37, 99, 235, 0.85),
+                    rgba(15, 23, 42, 0.95)
+                );
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+
+            border-radius: 18px;
+
+            background:
+                rgba(255, 255, 255, 0.15);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 32px;
+
+            margin-bottom: 30px;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.2);
+        }
+
+        .left h1 {
+            font-size: 45px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .left p {
+            font-size: 17px;
+            line-height: 1.7;
+
+            color: #dbeafe;
+
+            max-width: 430px;
+        }
+
+        .security-list {
+            margin-top: 35px;
+
+            list-style: none;
+        }
+
+        .security-list li {
+            margin: 15px 0;
+
+            font-size: 15px;
+
+            color: #e0f2fe;
+        }
+
+        .security-list span {
+            display: inline-flex;
+
+            width: 30px;
+            height: 30px;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.12);
+
+            margin-right: 10px;
+        }
+
+        /* =========================
+           RIGHT SIDE
+        ========================= */
+
+        .right {
+            background:
+                rgba(255, 255, 255, 0.97);
+
+            color: #111827;
+
+            padding: 60px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right h2 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .welcome {
+            color: #64748b;
+
+            margin-bottom: 35px;
+
+            font-size: 15px;
+        }
+
+        /* =========================
+           FLASH MESSAGES
+        ========================= */
+
+        .flash {
+            padding: 13px 15px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+        .flash.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .flash.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .flash.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .flash.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            margin-bottom: 8px;
+
+            color: #334155;
+        }
+
+        input {
+            width: 100%;
+            height: 52px;
+
+            padding: 0 15px;
+
+            border:
+                1px solid
+                #cbd5e1;
+
+            border-radius: 12px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition: 0.2s;
+
+            background: #f8fafc;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+
+            background: #ffffff;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(37, 99, 235, 0.10);
+        }
+
+        /* =========================
+           PASSWORD
+        ========================= */
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 55px;
+        }
+
+        .toggle-password {
+            position: absolute;
+
+            right: 15px;
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            border: none;
+
+            background: none;
+
+            cursor: pointer;
+
+            font-size: 18px;
+
+            color: #64748b;
+        }
+
+        /* =========================
+           LOGIN BUTTON
+        ========================= */
+
+        .login-button {
+            width: 100%;
+            height: 53px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+            margin-top: 5px;
+        }
+
+        .login-button:hover {
+            background: #1d4ed8;
+
+            transform:
+                translateY(-1px);
+
+            box-shadow:
+                0 10px 25px
+                rgba(37, 99, 235, 0.25);
+        }
+
+        /* =========================
+           REGISTER
+        ========================= */
+
+        .register {
+            text-align: center;
+
+            margin-top: 25px;
+
+            font-size: 14px;
+
+            color: #64748b;
+        }
+
+        .register a {
+            color: #2563eb;
+
+            text-decoration: none;
+
+            font-weight: 700;
+        }
+
+        .register a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           SECURITY NOTE
+        ========================= */
+
+        .secure-note {
+            margin-top: 25px;
+
+            text-align: center;
+
+            font-size: 12px;
+
+            color: #94a3b8;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            .container {
+                grid-template-columns: 1fr;
+
+                max-width: 520px;
+            }
+
+            .left {
+                padding: 40px 30px;
+            }
+
+            .left h1 {
+                font-size: 34px;
+            }
+
+            .right {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                border-radius: 20px;
+            }
+
+            .left {
+                padding: 30px 22px;
+            }
+
+            .right {
+                padding: 30px 22px;
+            }
+
+            .left h1 {
+                font-size: 30px;
+            }
+
+            .right h2 {
+                font-size: 27px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- =========================
+         LEFT PANEL
+    ========================= -->
+
+    <section class="left">
+
+        <div class="logo">
+            🔐
+        </div>
+
+        <h1>
+            Secure Login
+            System
+        </h1>
+
+        <p>
+            A secure authentication platform designed
+            to protect user accounts using modern
+            password hashing and secure session management.
+        </p>
+
+        <ul class="security-list">
+
+            <li>
+                <span>🛡️</span>
+                Argon2 password hashing
+            </li>
+
+            <li>
+                <span>🔒</span>
+                Secure session management
+            </li>
+
+            <li>
+                <span>🚫</span>
+                SQL injection protection
+            </li>
+
+            <li>
+                <span>✓</span>
+                Input validation
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- =========================
+         RIGHT PANEL
+    ========================= -->
+
+    <section class="right">
+
+        <h2>
+            Welcome Back
+        </h2>
+
+        <p class="welcome">
+            Sign in to access your secure account.
+        </p>
+
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- =========================
+             LOGIN FORM
+
+             IMPORTANT:
+             POST goes to login_user
+        ========================= -->
+
+        <form
+            method="POST"
+            action="{{ url_for('login_user') }}"
+        >
+
+            <div class="form-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                    autocomplete="username"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="password-wrapper">
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                        autocomplete="current-password"
+                    >
+
+                    <button
+                        type="button"
+                        class="toggle-password"
+                        onclick="togglePassword()"
+                        aria-label="Show password"
+                    >
+                        👁️
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="login-button"
+            >
+                Sign In Securely
+            </button>
+
+        </form>
+
+
+        <!-- REGISTER -->
+
+        <div class="register">
+
+            Don't have an account?
+
+            <a href="{{ url_for('register') }}">
+                Create Account
+            </a>
+
+        </div>
+
+
+        <!-- SECURITY NOTE -->
+
+        <div class="secure-note">
+
+            🔒 Your password is protected using
+            Argon2 hashing.
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- =========================
+     PASSWORD TOGGLE
+========================= -->
+
+<script>
+
+function togglePassword() {
+
+    const password =
+        document.getElementById("password");
+
+    const button =
+        document.querySelector(".toggle-password");
+
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        button.textContent = "🙈";
+
+    }
+
+    else {
+
+        password.type = "password";
+
+        button.textContent = "👁️";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>
